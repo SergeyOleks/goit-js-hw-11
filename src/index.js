@@ -3,26 +3,28 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchCountries } from './fetchCountries';
 import { createMarkup } from './createMarkup';
 import { createListCountries } from './createListCountries';
+import debounce from 'lodash.debounce';
 
+// const debounce = index.debounce();
 const countryInfo = document.querySelector('.country-info');
 const countryList = document.querySelector('.country-list');
 const input = document.querySelector('#search-box');
-const debounce = require('lodash.debounce');
-const DEBOUNCE_DELAY = 3000;
 
+const DEBOUNCE_DELAY = 300;
 
-input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY) );
+input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
-function onInput(evt){
-    evt.preventDefault();
+function onInput(evt){     
+    const name = evt.target.value.trim();
+
+    if (!name || name===""){  
+        return;
+    }
 
     countryList.innerHTML = '';
-    countryInfo.innerHTML = '';
-    
-    const name = evt.target.value;
-        
-    const fCountry = fetchCountries(name).then(data=>{
+    countryInfo.innerHTML = '';    
 
+    const fCountry = fetchCountries(name).then(data=>{
             if (data.length>10){
                 Notify.success('Too many matches found. Please enter a more specific name.');
                 return
