@@ -1,48 +1,29 @@
 import './css/styles.css';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { fetchCountries } from './fetchCountries';
-import { createMarkup } from './createMarkup';
-import { createListCountries } from './createListCountries';
-import debounce from 'lodash.debounce';
+import { fetchFindResult } from './fetchFindResult';
 
-// const debounce = index.debounce();
-const countryInfo = document.querySelector('.country-info');
-const countryList = document.querySelector('.country-list');
-const input = document.querySelector('#search-box');
+const form = document.querySelector('.search-form');
+const gallery = document.querySelector('.gallery');
+const paginationBtn = document.querySelector('.load-more');
+let currentPage = 1;
+let name;
 
-const DEBOUNCE_DELAY = 300;
+// form.style = 'background-color:blue;padding:0 auto;'
 
-input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
-
-function onInput(evt){     
-    const name = evt.target.value.trim();
-
-    if (!name || name===""){  
+form.addEventListener('submit',(evt)=>{
+    evt.preventDefault();
+    gallery.innerHTML='';
+    name = evt.currentTarget.elements[0].value;
+    if (!name){  
         return;
     }
+    currentPage=1;
+    fetchFindResult(name, currentPage, gallery, paginationBtn);
+    paginationBtn.hidden = false;
+});
 
-    countryList.innerHTML = '';
-    countryInfo.innerHTML = '';    
-
-    const fCountry = fetchCountries(name).then(data=>{
-            if (data.length>10){
-                Notify.success('Too many matches found. Please enter a more specific name.');
-                return
-            } else if (data.length > 1){
-                countryList.insertAdjacentHTML('beforeend', createListCountries(data));
-            }    
-            else if (data.length===1){
-                countryInfo.insertAdjacentHTML('beforeend', createMarkup(data));                
-                return
-            }                
-
-        }).catch(_=>Notify.failure('Oops, there is no country with that name')); 
+paginationBtn.addEventListener('click', onPagination);
+ 
+function onPagination(){
+    currentPage+=1;
+    fetchFindResult(name, currentPage, gallery, paginationBtn);
 }
-
-
-
-
-
-      
-
-
