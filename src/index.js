@@ -19,7 +19,7 @@ form.addEventListener('submit',(evt)=>{
     currentPage=1;
     fetchFindResult(name, currentPage, gallery, paginationBtn);
     paginationBtn.hidden = false;
-});
+}); 
 
 paginationBtn.addEventListener('click', onPagination);
  
