@@ -23,4 +23,4 @@ function checkSearchResult(resp, currentPage, paginationBtn){
     }
 }
 
-export {checkSearchResult}
+export {checkSearchResult} 
